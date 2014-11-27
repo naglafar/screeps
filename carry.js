@@ -6,17 +6,16 @@
  * var mod = require('carrier'); // -> 'a thing'
  */
 var _ = require('lodash'),
+    move = require('move'),
     carry = function (creeps) {
         _.each(creeps, function (creep){
+            var target;
             if (creep.energy <  creep.energyCapacity) {
-                var targets = creep.room.find(Game.DROPPED_ENERGY);
-                if(targets.length) {
-                    creep.moveTo(targets[0]);
-                    creep.pickup(targets[0]);
-                }
+                target = move.moveToNext(creep, Game.DROPPED_ENERGY);
+                creep.pickup(target);
             } else {
-                creep.moveTo(Game.spawns.Spawn1);
-                creep.transferEnergy(Game.spawns.Spawn1);
+                target = move.moveToNext(creep, Game.MY_SPAWNS);
+                creep.transferEnergy(target);
             }
         });
     },

@@ -8,20 +8,18 @@
 
 var _ = require('lodash'),
     mine = function (creeps) {
-
-        console.log('mining', JSON.stringify(arguments));
-
-
         _.forEach(creeps, function (creep) {
 
-            var activeSrc = creep.room.find(Game.SOURCES_ACTIVE),
-                target,
+            console.log('mining', creep);
+            var target,
                 dest;
 
             if (creep.memory.path && creep.memory.path.length >= 1 ) {
+                console.log(creep, 'moving');
                 dest = creep.memory.path.splice(0,1)[0];
                 creep.moveTo(dest);
             } else if (creep.memory.ct) {
+                console.log(creep, 'mining');
                 var mineResult = creep.harvest(creep.pos.findNearest(Game.SOURCES_ACTIVE));
                 if (mineResult !== 0) {
                     console.log('mine failed', mineResult);
@@ -29,15 +27,38 @@ var _ = require('lodash'),
                     delete creep.memory.ct;
                 }
             } else {
-                target = activeSrc[0];
+                console.log(creep, 'targeting');
+                target = findSourceNotBeingMined(creep);
+                console.log('target', target);
                 if (target) {
                     creep.memory.path = target.room.findPath(creep.pos, target.pos);
                     creep.memory.ct = creep.memory.path[creep.memory.path.length - 1];
                     dest = creep.memory.path.splice(0,1)[0];
                     creep.moveTo(dest);
                     creep.harvest(dest);
+                } else {
+                    console.log('no target');
                 }
             }
+        });
+    },
+    findSourceNotBeingMined = function (creep) {
+       var sources = creep.room.find(Game.SOURCES_ACTIVE),
+           miners = findMiners(),
+           freeSources;
+       console.log('active sources', sources);
+       freeSources = _.compact(_.map(sources, function (source) {
+               if(!isSourceBeingMined(source,miners)) {
+                   return source;
+               }
+           }));
+       console.log('free sources', JSON.stringify(freeSources));
+
+       return freeSources[0];
+    },
+    isSourceBeingMined = function (source, miners) {
+        return _.find(miners, function (miner) {
+            return miner.memory.ct && source.pos.x === miner.memory.ct.x && source.pos.y === miner.memory.ct.y;
         });
     },
     createMiner = function (spawn, name) {

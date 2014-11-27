@@ -21,12 +21,14 @@ var _ = require('lodash'),
 
         console.log(numberOfRequiredMiners, numberOfRequiredCarriers, numberOfMiners, numberOfCarriers);
 
-        if (numberOfMiners < numberOfRequiredMiners) {
-            miner.createMiner(Game.spawns.Spawn1);
-        }
+
 
         if (numberOfCarriers < numberOfRequiredCarriers) {
-            carry.createCarry(Game.spawns.Spawn1);
+            carry.createCarry(Game.spawns.Spawn1, 'carry' + numberOfCarriers);
+        }
+
+        if (numberOfMiners < numberOfRequiredMiners) {
+            miner.createMiner(Game.spawns.Spawn1, 'miner' + numberOfMiners);
         }
     };
 
