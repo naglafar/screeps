@@ -19,8 +19,22 @@ var _ = require('lodash'),
             }
         });
     },
-    createCarry = function (spawn, name) {
-        spawn.createCreep([Game.CARRY, Game.CARRY, Game.CARRY, Game.MOVE, Game.MOVE], name, {role: 'carry'});
+    createCarry = function (spawn, name, lvl) {
+        var body = [Game.CARRY],
+            lvl = lvl || 0;
+
+        switch (lvl) {
+            case 0:
+                body.push(Game.MOVE);
+                break;
+            case 1:
+                body.push(Game.CARRY, Game.MOVE, Game.MOVE);
+                break;
+            case 2:
+                body.push(Game.CARRY, Game.CARRY, Game.MOVE, Game.MOVE);
+                break;
+        }
+        spawn.createCreep(body, name, {role: 'carry'});
     },
     findCarrys = function () {
         return _.filter(Game.creeps, function (creep) {

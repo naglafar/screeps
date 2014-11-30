@@ -61,8 +61,22 @@ var _ = require('lodash'),
             return miner.memory.ct && source.pos.x === miner.memory.ct.x && source.pos.y === miner.memory.ct.y;
         });
     },
-    createMiner = function (spawn, name) {
-        spawn.createCreep([Game.WORK, Game.WORK, Game.WORK, Game.WORK, Game.MOVE], name, {role: 'miner'});
+    createMiner = function (spawn, name, lvl) {
+        var body = [Game.WORK],
+            lvl = lvl || 0;
+
+        switch (lvl) {
+            case 0:
+                body.push(Game.MOVE);
+                break;
+            case 1:
+                body.push(Game.WORK, Game.WORK, Game.MOVE);
+                break;
+            case 2:
+                body.push(Game.WORK, Game.WORK, Game.WORK, Game.MOVE);
+                break;
+        }
+        spawn.createCreep(body, name, {role: 'miner'});
     },
     findMiners = function () {
         return _.filter(Game.creeps, function (creep) {

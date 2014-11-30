@@ -3,7 +3,7 @@ var _ = require('lodash'),
         return findAndMove(creep, creep.room.find(target));
     },
     findAndMove = function (creep, targets) {
-        console.log('findAndMove',  JSON.stringify(creep),  JSON.stringify(targets));
+        //console.log('findAndMove',  JSON.stringify(creep),  JSON.stringify(targets));
         var target;
 
         if (creep.memory.ct) {
@@ -11,10 +11,11 @@ var _ = require('lodash'),
         } else {
             if(targets.length > 0) {
                 target = targets.splice(0,1)[0];
-                console.log('findAndMove - target:', JSON.stringify(target));
+               // console.log('findAndMove - target:', JSON.stringify(target));
                 return moveOrFindNewTarget(creep, target, targets);
             } else {
                 console.log('no path to any targets');
+                return false;
             }
         }
 
@@ -23,12 +24,13 @@ var _ = require('lodash'),
         var moveResult = creep.moveTo(target);
         switch (moveResult) {
             case -2:
-                console.log('findAndMove - no path to target:');
+               // console.log('findAndMove - no path to target:');
+                delete creep.memory.ct;
                 return findAndMove(creep, targets);
             case 0:
                 return target;
             default:
-                console.log('move failed', moveResult);
+               // console.log('move failed', moveResult);
                 return moveResult;
         }
     };
